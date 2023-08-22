@@ -1,19 +1,67 @@
 * {
+    margin: 0;
+    padding: 0;
     box-sizing: border-box;
 }
 
 body {
-
+    font-family: Poppins;
 }
 
 .top-nav{
-    float:right;
+    display: flex;
+    justify-content: flex-end;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    padding: 2em;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    padding: 20px;
+    font-size: 1.5em;
 }
 
 .hero {
+    color: white;
     display: flex;
     justify-content: center;
     flex-direction: column;
     text-align: center;
-    background-image: url(https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.travelinusa.us%2Fmeteor-crater-arizona%2F&psig=AOvVaw0RIZYYMcKyuDbiNgH0EbEr&ust=1692486084841000&source=images&cd=vfe&opi=89978449&ved=0CA8QjRxqFwoTCMDM95Co54ADFQAAAAAdAAAAABAE);
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.5)),
+                url(https://www.travelinusa.us/wp-content/uploads/sites/3/2014/07/meteor-crater-arizona-1.jpg);
+    background-size: cover;
+}
+
+.hero-h1 {
+    font-size: 6rem;
+}
+
+.hero-h2 {
+    font-size: 2rem;
+    padding-bottom: 30px;
+}
+
+.search-btn {
+    width: 250px;
+    height: 50px;
+    font-size: 1.25em;
+    align-self: center;
+    border: none;
+    border-radius: 25px;
+    color: white;
+    background-color: purple;   
+}
+
+footer {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    bottom: 0;
+    align-self: center;
+    padding: 1em;
 }
