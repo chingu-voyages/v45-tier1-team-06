@@ -79,8 +79,12 @@ form {
     margin-inline: auto;
     display: grid;
     grid-template-columns: max-content minmax(100px, 1fr);
-    gap: 1em;
+    column-gap: 1em;
     border-radius: 5px;
+}
+
+form input {
+    margin-bottom: 1em;
 }
 
 input:not([type="range"]) {
@@ -198,4 +202,13 @@ input[type="range"] {
 #fromSlider {
     height: 0;
     z-index: 1;
+}
+
+/* Media query for mobile responsiveness */
+
+@media (max-width: 460px) {
+    form {
+        grid-template-columns: 1fr;
+        width: calc(100% - 2em);
+    }
 }
