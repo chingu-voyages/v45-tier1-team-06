@@ -174,7 +174,7 @@ input[type=range]::-webkit-slider-thumb:active {
 
 .range_container input[type="number"] {
     color: #8a8383;
-    width: 100px;
+    width: 120px;
     height: 30px;
     font-size: 1.125rem;
     border: none;

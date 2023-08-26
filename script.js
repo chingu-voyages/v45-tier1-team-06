@@ -1,3 +1,24 @@
+// Code to pull the data from the API
+
+let meteoriteData; // The code below saves the result of the API call to this variable, which we can use anywhere else in the code
+// Note that this variable will be empty for a few seconds while the function below fetches the data from the API.
+// The meteorite data is in array of objects. Each array represents a meteorite, and each key in the object is a property of that meteorite.
+// The available keys are: name, id, nametype, recclass, mass, fall, year, reclat, reclong, geolocation.
+
+async function fetchMeteoriteData() {
+    try {
+        const response = await fetch("https://data.nasa.gov/resource/gh4g-9sfh.json");
+        if (!response.ok) throw new Error("Connection to API unsuccessful");
+        const data = await response.json();
+        return data; // This function returns a promise
+    }
+    catch (error) {
+        console.log(error);
+    }
+}
+
+fetchMeteoriteData().then(response => meteoriteData = response); // This calls the function that fetches the API data and then assigns it to the variable
+
 // The code below is for the Mass Range slider
 
 function controlFromInput(fromSlider, fromInput, toInput, controlSlider) {
