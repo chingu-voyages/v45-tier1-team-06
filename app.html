@@ -1,39 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Fireball</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css" />
     <script src="script.js" defer></script>
-</head>
-<body>
+  </head>
+  <body>
     <form action="">
-        <label for="name">Name: </label><input type="text" name="name">
-        <label for="year">Year of Strike: </label><input type="number" name="year">
-        <label for="recclass">Recclass: </label><input type="text" name="recclass">
-        <p>Mass Range: </p>
-        <div class="range_container">
-            <div class="sliders_control">
-                <input id="fromSlider" type="range" value="0" min="0" max="23000000"/>
-                <input id="toSlider" type="range" value="23000000" min="0" max="23000000"/>
-            </div>
-            <div class="form_control">
-                <div class="form_control_container">
-                    <div class="form_control_container__time">Min</div>
-                    <input class="form_control_container__time__input" type="number" id="fromInput" value="0" min="0" max="23000000"/>
-                </div>
-                <div class="form_control_container">
-                    <div class="form_control_container__time">Max</div>
-                    <input class="form_control_container__time__input" type="number" id="toInput" value="23000000" min="0" max="23000000"/>
-                </div>
-            </div>
+      <label for="name">Name: </label
+      ><input type="text" name="name" id="name" />
+      <label for="year">Year of Strike: </label
+      ><input type="number" name="year" id="year" min="861" max="2013" />
+      <label for="recclass">Recclass: </label
+      ><input type="text" name="recclass" id="recclass" />
+      <p>Mass Range:</p>
+      <div class="range_container">
+        <div class="sliders_control">
+          <input
+            id="fromSlider"
+            type="range"
+            value="0"
+            min="0"
+            max="23000000"
+          />
+          <input
+            id="toSlider"
+            type="range"
+            value="23000000"
+            min="0"
+            max="23000000"
+          />
         </div>
-        <div class="search btn-container">
-            <button class="search search-button">Search</button>
-            <button class="search clear-button">Clear</button>
+        <div class="form_control">
+          <div class="form_control_container">
+            <div class="form_control_container__time">Min</div>
+            <input
+              class="min form_control_container__time__input"
+              type="number"
+              id="fromInput"
+              value="0"
+              min="0"
+              max="23000000"
+            />
+          </div>
+          <div class="form_control_container">
+            <div class="form_control_container__time">Max</div>
+            <input
+              class="max form_control_container__time__input"
+              type="number"
+              id="toInput"
+              value="23000000"
+              min="0"
+              max="23000000"
+            />
+          </div>
         </div>
+      </div>
+      <div class="search btn-container">
+        <button type="submit" class="search search-button">Search</button>
+        <button type="reset" class="search clear-button">Clear</button>
+      </div>
     </form>
-</body>
+  </body>
 </html>
-
