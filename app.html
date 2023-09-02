@@ -6,62 +6,79 @@
     <title>Fireball</title>
     <link rel="stylesheet" href="styles.css" />
     <script src="script.js" defer></script>
+    <link rel="icon" type="image/x-icon" href="/assets/meteor.png">
   </head>
   <body>
-    <form action="">
-      <label for="name">Name: </label
-      ><input type="text" name="name" id="name" />
-      <label for="year">Year of Strike: </label
-      ><input type="number" name="year" id="year" min="861" max="2013" />
-      <label for="recclass">Recclass: </label
-      ><input type="text" name="recclass" id="recclass" />
-      <p>Mass Range:</p>
-      <div class="range_container">
-        <div class="sliders_control">
-          <input
-            id="fromSlider"
-            type="range"
-            value="0"
-            min="0"
-            max="23000000"
-          />
-          <input
-            id="toSlider"
-            type="range"
-            value="23000000"
-            min="0"
-            max="23000000"
-          />
-        </div>
-        <div class="form_control">
-          <div class="form_control_container">
-            <div class="form_control_container__time">Min</div>
+    <main>
+      <section id="search-component">
+      <form action="">
+        <label for="name">Name: </label
+        ><input type="text" name="name" id="name" />
+        <label for="year">Year of Strike: </label
+        ><input type="number" name="year" id="year" min="861" max="2013" />
+        <label for="recclass">Recclass: </label
+        ><input type="text" name="recclass" id="recclass" />
+        <p>Mass Range:</p>
+        <div class="range_container">
+          <div class="sliders_control">
             <input
-              class="min form_control_container__time__input"
-              type="number"
-              id="fromInput"
+              id="fromSlider"
+              type="range"
               value="0"
               min="0"
               max="23000000"
             />
-          </div>
-          <div class="form_control_container">
-            <div class="form_control_container__time">Max</div>
             <input
-              class="max form_control_container__time__input"
-              type="number"
-              id="toInput"
+              id="toSlider"
+              type="range"
               value="23000000"
               min="0"
               max="23000000"
             />
           </div>
+          <div class="form_control">
+            <div class="form_control_container">
+              <div class="form_control_container__time">Min</div>
+              <input
+                class="min form_control_container__time__input"
+                type="number"
+                id="fromInput"
+                value="0"
+                min="0"
+                max="23000000"
+              />
+            </div>
+            <div class="form_control_container">
+              <div class="form_control_container__time">Max</div>
+              <input
+                class="max form_control_container__time__input"
+                type="number"
+                id="toInput"
+                value="23000000"
+                min="0"
+                max="23000000"
+              />
+            </div>
+          </div>
         </div>
+        <div class="search btn-container">
+          <button type="submit" class="search search-button">Search</button>
+          <button type="reset" class="search clear-button">Clear</button>
+        </div>
+      </form>
+    </section>
+    <section id="table-component">
+      <div class="table">
+        <span class="table-header">ID</span>
+        <span class="table-header">Name</span>
+        <span class="table-header">Year</span>
+        <span class="table-header">Composition (Reclass)</span>
+        <span class="table-header">Mass</span>
+        <span class="table-header">Fall</span>
+        <span class="table-header">Latitude</span>
+        <span class="table-header">Longitude</span>
       </div>
-      <div class="search btn-container">
-        <button type="submit" class="search search-button">Search</button>
-        <button type="reset" class="search clear-button">Clear</button>
-      </div>
-    </form>
+    </section>
+    </main>
   </body>
 </html>

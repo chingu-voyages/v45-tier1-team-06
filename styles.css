@@ -68,6 +68,11 @@ footer {
 
 /* App style starts here */
 
+main {
+    width: min(82ch, 100% - 4rem);
+    margin-inline: auto;
+}
+
 /* Search component style */
 
 form {
@@ -75,8 +80,6 @@ form {
     border: 1px solid rgb(37, 218, 165);
     background-color: rgb(215 245 236);
     padding: 20px 10px;
-    width: min(70ch, 100% - 4rem);
-    margin-inline: auto;
     display: grid;
     grid-template-columns: max-content minmax(100px, 1fr);
     column-gap: 1em;
@@ -204,11 +207,45 @@ input[type="range"] {
     z-index: 1;
 }
 
+/* Table */
+
+#table-component {
+    padding: 2em 0;
+}
+
+.table {
+    display: grid;
+    grid-template-columns: repeat(8, max-content);
+    overflow: auto;
+    border-radius: 5px;
+}
+
+.table>span {
+    max-width: 7rem;
+    word-wrap: normal;
+    border: 1px solid #ccc;
+    padding: 0.5em;
+}
+
+.table>span.odd {
+    background-color: #eee;
+}
+
+span.table-header {
+    font-weight: bold;
+    text-align: center;
+    background-color: #999;
+    color: white;
+}
+
 /* Media query for mobile responsiveness */
 
 @media (max-width: 460px) {
+    main {
+        width: calc(100% - 2em);
+    }
+
     form {
         grid-template-columns: 1fr;
-        width: calc(100% - 2em);
     }
 }
