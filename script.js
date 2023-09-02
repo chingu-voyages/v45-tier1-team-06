@@ -12,13 +12,16 @@ async function fetchMeteoriteData() {
     );
     if (!response.ok) throw new Error("Connection to API unsuccessful");
     const data = await response.json();
+    meteoriteData = data;
+    fillTable(data);
     return data; // This function returns a promise
   } catch (error) {
     console.log(error);
   }
 }
 
-fetchMeteoriteData().then((response) => (meteoriteData = response)); // This calls the function that fetches the API data and then assigns it to the variable
+fetchMeteoriteData()
+
 //code below is for the search and clear buttons
 
 const form = document.querySelector("form");
@@ -40,6 +43,27 @@ form.addEventListener("submit", (e) => {
     massRangeMax: massRangeInputs[1].value,
   };
 });
+
+const tableFields = ["id", "name", "year", "recclass", "mass", "fall", "latitude", "longitude"];
+
+function fillTable(meteors) {
+  meteors.forEach((meteor, i) => {
+    tableFields.forEach(field => {
+      let content = (field[0] === "l" && meteor.geolocation) ? meteor.geolocation[field] : meteor[field];
+      if (field === "year" && content) content = content.slice(0, 4);
+      if (field === "mass" && content) content = Math.round(content * 100) / 100;
+      addFieldToTable(content, i);
+    })
+  });
+}
+
+function addFieldToTable(content, i) {
+  const cell = document.createElement("span");
+  cell.textContent = content;
+  if (i % 2 !== 0) cell.classList.add("odd");
+  const table = document.querySelector("div.table");
+  table.appendChild(cell);
+}
 
 // The code below is for the Mass Range slider
 
