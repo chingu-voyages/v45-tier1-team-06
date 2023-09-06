@@ -20,40 +20,68 @@ async function fetchMeteoriteData() {
   }
 }
 
-fetchMeteoriteData()
+fetchMeteoriteData();
 
-//code below is for the search and clear buttons
-
+//code below is for the form submit
 const form = document.querySelector("form");
 form.addEventListener("submit", (e) => {
   e.preventDefault();
-  const name = document.getElementById("name").value;
+  const name = document.getElementById("name").value || null;
   const year = document.getElementById("year").value;
   const recclass = document.getElementById("recclass").value;
   const massRangeInputs = document.querySelectorAll(
     ".form_control_container__time__input"
   );
+  const massRangeMin = Number(massRangeInputs[0].value);
+  const massRangeMax = Number(massRangeInputs[1].value);
 
-  //has all the inputs values
-  const parameters = {
-    name,
-    year,
-    recclass,
-    massRangeMin: massRangeInputs[0].value,
-    massRangeMax: massRangeInputs[1].value,
-  };
+  const filterData = () =>
+    meteoriteData.filter((meteorite) => {
+      const meteoriteDate = new Date(meteorite.year);
+      if (
+        (name ? meteorite.name.toLowerCase() == name.toLowerCase() : true) &&
+        (recclass
+          ? meteorite.recclass.toUpperCase() == recclass.toUpperCase()
+          : true) &&
+        Number(meteorite.mass) >= massRangeMin &&
+        Number(meteorite.mass) <= massRangeMax &&
+        (year ? meteoriteDate.getFullYear() === Number(year) : true)
+      ) {
+        return meteorite;
+      }
+    });
+  cleanTable();
+  fillTable(filterData());
 });
 
-const tableFields = ["id", "name", "year", "recclass", "mass", "fall", "latitude", "longitude"];
+const tableFields = [
+  "id",
+  "name",
+  "year",
+  "recclass",
+  "mass",
+  "fall",
+  "latitude",
+  "longitude",
+];
+
+function cleanTable() {
+  const cells = document.querySelectorAll(".odd, .even");
+  cells.forEach((cell) => cell.remove());
+}
 
 function fillTable(meteors) {
   meteors.forEach((meteor, i) => {
-    tableFields.forEach(field => {
-      let content = (field[0] === "l" && meteor.geolocation) ? meteor.geolocation[field] : meteor[field];
+    tableFields.forEach((field) => {
+      let content =
+        field[0] === "l" && meteor.geolocation
+          ? meteor.geolocation[field]
+          : meteor[field];
       if (field === "year" && content) content = content.slice(0, 4);
-      if (field === "mass" && content) content = Math.round(content * 100) / 100;
+      if (field === "mass" && content)
+        content = Math.round(content * 100) / 100;
       addFieldToTable(content, i);
-    })
+    });
   });
 }
 
@@ -61,6 +89,7 @@ function addFieldToTable(content, i) {
   const cell = document.createElement("span");
   cell.textContent = content;
   if (i % 2 !== 0) cell.classList.add("odd");
+  else cell.classList.add("even");
   const table = document.querySelector("div.table");
   table.appendChild(cell);
 }
