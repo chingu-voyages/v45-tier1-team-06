@@ -12,12 +12,12 @@
     <main>
       <section id="search-component">
       <form action="">
-        <label for="name">Name: </label
-        ><input type="text" name="name" id="name" />
-        <label for="year">Year of Strike: </label
-        ><input type="number" name="year" id="year" min="861" max="2013" />
-        <label for="recclass">Recclass: </label
-        ><input type="text" name="recclass" id="recclass" />
+        <label for="name">Name: </label>
+        <input type="text" name="name" id="name" autofocus autocomplete="off"/>
+        <label for="year">Year of Strike: </label>
+        <input type="number" name="year" id="year" min="861" max="2013" />
+        <label for="recclass">Recclass: </label>
+        <input type="text" name="recclass" id="recclass" autocomplete="off"/>
         <p>Mass Range:</p>
         <div class="range_container">
           <div class="sliders_control">
@@ -66,6 +66,12 @@
           <button type="reset" class="search clear-button">Clear</button>
         </div>
       </form>
+    </section>
+    <section id="summary-component">
+      <div class="metrics">
+        <p class="strikes">Total number of strikes: </p><p id="total-strikes"></p>
+        <p class="mass">Average mass (grams): </p><p id="avg-mass"></p>
+      </div>
     </section>
     <section id="table-component">
       <div class="table">

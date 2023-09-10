@@ -12,8 +12,10 @@ async function fetchMeteoriteData() {
     );
     if (!response.ok) throw new Error("Connection to API unsuccessful");
     const data = await response.json();
-    meteoriteData = data;
+    setTotalStrikes(data);
+    setAvgMass(data);
     fillTable(data);
+    meteoriteData = data;
     return data; // This function returns a promise
   } catch (error) {
     console.log(error);
@@ -38,21 +40,47 @@ form.addEventListener("submit", (e) => {
   const filterData = () =>
     meteoriteData.filter((meteorite) => {
       const meteoriteDate = new Date(meteorite.year);
-      if (
-        (name ? meteorite.name.toLowerCase() == name.toLowerCase() : true) &&
+      return (name ? meteorite.name.toLowerCase().includes(name.toLowerCase()) : true) &&
         (recclass
           ? meteorite.recclass.toUpperCase() == recclass.toUpperCase()
           : true) &&
-        Number(meteorite.mass) >= massRangeMin &&
-        Number(meteorite.mass) <= massRangeMax &&
+        (Number(meteorite.mass) >= massRangeMin || (massRangeMin == 0 && !meteorite.mass)) &&
+        (Number(meteorite.mass) <= massRangeMax || (massRangeMin == 0 && !meteorite.mass)) &&
         (year ? meteoriteDate.getFullYear() === Number(year) : true)
-      ) {
-        return meteorite;
-      }
     });
+  const filteredData = filterData();
+  setTotalStrikes(filteredData);
+  setAvgMass(filteredData);
   cleanTable();
-  fillTable(filterData());
+  fillTable(filteredData);
 });
+
+const resetBtn = document.querySelector(".search.clear-button");
+resetBtn.addEventListener("click", resetContent);
+
+function resetContent() {
+  setTotalStrikes(meteoriteData);
+  setAvgMass(meteoriteData);
+  cleanTable();
+  fillTable(meteoriteData);
+}
+
+// Summary metric functions
+
+function setTotalStrikes(meteorites) {
+  const totalStrikesElement = document.getElementById("total-strikes");
+  totalStrikesElement.textContent = meteorites.length.toLocaleString("en-US");
+}
+
+function setAvgMass(meteorites) {
+  const avgMassElement = document.getElementById("avg-mass");
+  const meteorsWithMass = meteorites.filter(e => e.mass);
+  if (!meteorsWithMass.length) return avgMassElement.textContent = 0;
+  const avgMass = meteorsWithMass.reduce((sum, e) => sum += +e.mass, 0)  / meteorsWithMass.length;
+  avgMassElement.textContent = (Math.round(avgMass * 100) / 100).toLocaleString("en-US");
+}
+
+// Table functions
 
 const tableFields = [
   "id",
@@ -75,11 +103,11 @@ function fillTable(meteors) {
     tableFields.forEach((field) => {
       let content =
         field[0] === "l" && meteor.geolocation
-          ? meteor.geolocation[field]
+          ? Math.round(+meteor.geolocation[field] * 1000) / 1000
           : meteor[field];
       if (field === "year" && content) content = content.slice(0, 4);
       if (field === "mass" && content)
-        content = Math.round(content * 100) / 100;
+        content = (Math.round(content * 100) / 100).toLocaleString();
       addFieldToTable(content, i);
     });
   });
