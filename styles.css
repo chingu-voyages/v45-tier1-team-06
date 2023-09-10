@@ -73,6 +73,10 @@ main {
     margin-inline: auto;
 }
 
+section {
+    padding: 1em 0;
+}
+
 /* Search component style */
 
 form {
@@ -207,15 +211,24 @@ input[type="range"] {
     z-index: 1;
 }
 
-/* Table */
+/* Summary */
 
-#table-component {
-    padding: 2em 0;
+.metrics {
+    display: grid;
+    grid-template-columns: max-content max-content;
+    justify-content: center;
+    column-gap: 1em;
+    row-gap: 1em;
+    margin: 1em 0;
+    font-size: 1.5em;
 }
+
+
+/* Table */
 
 .table {
     display: grid;
-    grid-template-columns: repeat(8, max-content);
+    grid-template-columns: repeat(8, minmax(max-content, 1fr));
     overflow: auto;
     border-radius: 5px;
 }
