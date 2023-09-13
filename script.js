@@ -1,3 +1,15 @@
+//imports libary to display graphs
+import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
+
+//Dimensions for graph
+// Declare the chart dimensions and margins.
+const width = 640;
+const height = 400;
+const marginTop = 20;
+const marginRight = 20;
+const marginBottom = 30;
+const marginLeft = 40;
+
 // Code to pull the data from the API
 
 let meteoriteData; // The code below saves the result of the API call to this variable, which we can use anywhere else in the code
