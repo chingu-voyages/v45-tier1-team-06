@@ -10,6 +10,7 @@ const marginRight = 20;
 const marginBottom = 30;
 const marginLeft = 40;
 
+
 // Code to pull the data from the API
 
 let meteoriteData; // The code below saves the result of the API call to this variable, which we can use anywhere else in the code
@@ -35,6 +36,12 @@ async function fetchMeteoriteData() {
 }
 
 fetchMeteoriteData();
+
+//Fomatting data for histogram
+const series = d3.stack()
+    //.keys(d3.union(meteoriteData.map(d => //This is where you put the x-axis))) 
+    //.value(([, group], key) => group.get(key).//This is where you put the y-axis)
+  //(d3.index(data, d => d.<year?>, d => d.<something to look at per year?>));
 
 //code below is for the form submit
 const form = document.querySelector("form");
