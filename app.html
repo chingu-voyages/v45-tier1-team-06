@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Fireball</title>
     <link rel="stylesheet" href="styles.css" />
-    <script src="script.js" defer></script>
+    <script type="module" src="script.js" defer></script>
     <link rel="icon" type="image/x-icon" href="/assets/meteor.png">
   </head>
   <body>
@@ -72,6 +72,8 @@
         <p class="strikes">Total number of strikes: </p><p id="total-strikes"></p>
         <p class="mass">Average mass (grams): </p><p id="avg-mass"></p>
       </div>
+      <div class="histogram-container by-year"></div>
+      <div class="histogram-container by-composition"></div>
     </section>
     <section id="table-component">
       <div class="table">

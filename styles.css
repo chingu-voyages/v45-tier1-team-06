@@ -223,6 +223,12 @@ input[type="range"] {
     font-size: 1.5em;
 }
 
+/* Histograms */
+
+g>text {
+    font-size: 0.8rem;
+}
+
 
 /* Table */
 

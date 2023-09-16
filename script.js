@@ -1,3 +1,6 @@
+//imports library to display graphs
+import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
+
 // Code to pull the data from the API
 
 let meteoriteData; // The code below saves the result of the API call to this variable, which we can use anywhere else in the code
@@ -15,6 +18,7 @@ async function fetchMeteoriteData() {
     setTotalStrikes(data);
     setAvgMass(data);
     fillTable(data);
+    loadHistogramByYear(data);
     meteoriteData = data;
     return data; // This function returns a promise
   } catch (error) {
@@ -51,6 +55,8 @@ form.addEventListener("submit", (e) => {
   const filteredData = filterData();
   setTotalStrikes(filteredData);
   setAvgMass(filteredData);
+  clearHistograms();
+  loadHistogramByYear(filteredData);
   cleanTable();
   fillTable(filteredData);
 });
@@ -61,6 +67,8 @@ resetBtn.addEventListener("click", resetContent);
 function resetContent() {
   setTotalStrikes(meteoriteData);
   setAvgMass(meteoriteData);
+  clearHistograms();
+  loadHistogramByYear(meteoriteData);
   cleanTable();
   fillTable(meteoriteData);
 }
@@ -78,6 +86,111 @@ function setAvgMass(meteorites) {
   if (!meteorsWithMass.length) return avgMassElement.textContent = 0;
   const avgMass = meteorsWithMass.reduce((sum, e) => sum += +e.mass, 0)  / meteorsWithMass.length;
   avgMassElement.textContent = (Math.round(avgMass * 100) / 100).toLocaleString("en-US");
+}
+
+// Histograms
+
+function loadHistogramByYear(data) {
+  // Get the bins from the data
+  const bins = d3.bin()
+    .value(d => d.year ? +d.year.slice(0,4) : null)
+    (data);
+
+  const binsMax = d3.max(bins, (d) => d.length);
+
+  // console.log(bins[0].x0);
+  // console.log(bins.length);
+  // console.log(bins[bins.length - 1].x1);
+  // console.log(binsMax);
+
+  // Define SVG measures
+  const margin = {top: 20, right: 20, bottom: 30, left: 40};
+  const width = 960 - margin.left - margin.right;
+  const height = 500 - margin.top - margin.bottom;
+
+  // Append SVG element
+  const svg = d3.select(".histogram-container.by-year")
+    .append("svg")
+    .attr("width", width)
+    .attr("height", height)
+    .attr("viewBox", [0, 0, width, height])
+    .attr("style", "max-width: 100%; height: auto;");
+
+  // X axis scale
+  const xScale = d3.scaleLinear()
+    .domain([bins[0].x0, bins[bins.length - 1].x1])     // can use this instead of 1000 to have the max of data: d3.max(data, function(d) { return +d.price })
+    .range([margin.left, width - margin.right]);
+
+  // Y axis scale
+  const yScale = d3.scaleLinear()
+    .domain([0, binsMax])
+    .range([height - margin.bottom, margin.top]);
+
+  // Append the bar rectangles to the svg element
+  svg.selectAll("rect")
+    .data(bins)
+    .enter()
+    .append("rect")
+    .attr("x", (d) => xScale(d.x0) + 1)
+    .attr("width", (d) => xScale(d.x1) - xScale(d.x0) - 1)
+    .attr("y", (d) => yScale(d.length))
+    .attr("height", (d) => yScale(0) - yScale(d.length))
+      // .attr("x", 1)
+      // //.attr("class", d => console.log(d.x1))
+      // .attr("transform", function(d) { return "translate(" + xScale(d.x0) + "," + yScale(d.length) + ")"; })
+      // .attr("width", function(d) { return xScale(d.x1) - xScale(d.x0) -1 ; })
+      // .attr("height", function(d) { return height - yScale(d.length); })
+    .style("fill", "steelblue");
+
+  // Append the data labels to the bars
+  svg.selectAll("text")
+    .data(bins)
+    .enter()
+    .append("text")
+    .text(d => d.length)
+    .attr("x", d => {
+      const adjustment = d.length >= 100 ? 10 :
+        d.length >= 10 ? 5 : 1;
+      return xScale(d.x0) + (xScale(d.x1) - xScale(d.x0)- 1) / 2 - adjustment
+    })
+    .attr("y", d => {
+      const adjustment = d.length == binsMax ?
+      20 : -10;
+    return yScale(d.length) + adjustment
+    })
+    .style("fill", d => d.length == binsMax ? "white" : "black");
+
+  // Add the X axis
+  svg.append("g")
+  .attr("transform", `translate(0,${height - margin.bottom})`)
+  .call(d3.axisBottom(xScale).ticks(width / 80).tickSizeOuter(0))
+  .call((g) => g.append("text")
+      .attr("x", width)
+      .attr("y", margin.bottom)
+      .attr("fill", "currentColor")
+      .attr("text-anchor", "end")
+      .text("Year"));
+
+  // Add the Y axis
+  svg.append("g")
+  .attr("transform", `translate(${margin.left},0)`)
+  .call(d3.axisLeft(yScale).ticks(height / 40))
+  //.call((g) => g.select(".domain").remove())
+  .call((g) => g.append("text")
+      .attr("x", - margin.left)
+      .attr("y", 10)
+      .attr("fill", "currentColor")
+      .attr("text-anchor", "start")
+      .text("Frequency (no. of meteors)"));
+}
+
+function clearHistograms() {
+  const containers = document.querySelectorAll(".histogram-container");
+  containers.forEach(container => {
+    if (!container.firstElementChild) return;
+    //console.log(container.firstElementChild);
+    container.removeChild(container.firstElementChild);
+  })
 }
 
 // Table functions
