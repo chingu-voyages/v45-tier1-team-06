@@ -55,26 +55,83 @@ nav a {
     border-radius: 25px;
     color: white;
     background-color: purple;   
+    cursor: pointer;
+}
+
+a.redirect {
+    width: max-content;
 }
 
 footer {
+    width: 100%;
+}
+
+footer.landing {
     position: absolute;
+    bottom: 0.5em;
+}
+
+footer>a {
+    padding: 0.5em 0;
+    text-decoration: none;
+    width: 100%;
     display: flex;
     justify-content: center;
-    bottom: 0;
-    align-self: center;
-    padding: 1em;
+    align-items: center;
+    gap: 0.5em;
+    color: white;
+    fill: white;
+}
+
+footer p {
+    text-wrap: nowrap;
+}
+
+#gh-logo {
+    max-width: 1.5em;
 }
 
 /* App style starts here */
 
+body {
+    display: grid;
+    grid-template-rows: max-content 1fr max-content;
+    height: 100svh;
+    position: relative;
+}
+
+header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0.5em 0;
+    gap: 1em;
+    background-color: #555;
+    color: white;
+    width: 100%;
+    z-index: 10;
+}
+
 main {
+    overflow: auto;
+}
+
+.scrollable {
     width: min(890px, 100% - 4rem);
     margin-inline: auto;
 }
 
+.main::-webkit-scrollbar {
+    position: absolute;
+    left: 0;
+}
+
 section {
     padding: 1em 0;
+}
+
+footer.app>a {
+    background-color: #555;
 }
 
 /* Search component style */
@@ -287,7 +344,7 @@ span.table-header {
 /* Media query for mobile responsiveness */
 
 @media (max-width: 460px) {
-    main {
+    .scrollable {
         width: calc(100% - 2em);
     }
 
