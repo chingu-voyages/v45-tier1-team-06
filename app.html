@@ -13,11 +13,11 @@
       <section id="search-component">
       <form action="">
         <label for="name">Name: </label>
-        <input type="text" name="name" id="name" autofocus autocomplete="off"/>
+        <input type="text" name="name" id="name" placeholder="aachen" autofocus autocomplete="off"/>
         <label for="year">Year of Strike: </label>
-        <input type="number" name="year" id="year" min="861" max="2013" />
-        <label for="recclass">Recclass: </label>
-        <input type="text" name="recclass" id="recclass" autocomplete="off"/>
+        <input type="number" name="year" id="year" placeholder="1937" min="861" max="2013" />
+        <label for="recclass">Commposition: </label>
+        <input type="text" name="recclass" id="recclass" placeholder="L6" autocomplete="off"/>
         <p>Mass Range:</p>
         <div class="range_container">
           <div class="sliders_control">
@@ -68,6 +68,7 @@
       </form>
     </section>
     <section id="summary-component">
+      <div class="graph-title">Summary metrics</div>
       <div class="metrics">
         <p class="strikes">Total number of strikes: </p><p id="total-strikes"></p>
         <p class="mass">Average mass (grams): </p><p id="avg-mass"></p>
@@ -80,11 +81,12 @@
       </div>
     </section>
     <section id="table-component">
+      <div class="graph-title">Detailed Data</div>
       <div class="table">
         <span class="table-header">ID</span>
         <span class="table-header">Name</span>
         <span class="table-header">Year</span>
-        <span class="table-header">Composition (Reclass)</span>
+        <span class="table-header">Composition</span>
         <span class="table-header">Mass</span>
         <span class="table-header">Fall</span>
         <span class="table-header">Latitude</span>

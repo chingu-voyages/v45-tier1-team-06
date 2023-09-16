@@ -69,7 +69,7 @@ footer {
 /* App style starts here */
 
 main {
-    width: min(960px, 100% - 4rem);
+    width: min(890px, 100% - 4rem);
     margin-inline: auto;
 }
 
@@ -233,6 +233,7 @@ input[type="range"] {
     text-align: center;
     margin-bottom: 2em;
     font-size: 1.5em;
+    font-weight: bold;
 }
 
 rect {
@@ -266,7 +267,7 @@ g>text {
 }
 
 .table>span {
-    max-width: 8rem;
+    max-width: 7rem;
     word-wrap: normal;
     border: 1px solid #ccc;
     padding: 0.5em;

@@ -96,9 +96,9 @@ function loadHistogramByYear(data) {
   const binsMax = d3.max(bins, (d) => d.length);
 
   // Define SVG measures
-  const margin = {top: 40, right: 20, bottom: 30, left: 40};
+  const margin = {top: 40, right: 20, bottom: 40, left: 40};
   const width = 960 - margin.left - margin.right;
-  const height = 520 - margin.top - margin.bottom;
+  const height = 540 - margin.top - margin.bottom;
 
   // Append SVG element
   const svg = d3.select(".histogram-container.by-year")
@@ -123,8 +123,8 @@ function loadHistogramByYear(data) {
     .data(bins)
     .enter()
     .append("rect")
-    .attr("x", (d) => xScale(d.x0) + 1)
-    .attr("width", (d) => xScale(d.x1) - xScale(d.x0) - 1)
+    .attr("x", (d) => bins.length === 1 ? margin.left : xScale(d.x0) + 1)
+    .attr("width", (d) => bins.length === 1 ? width - margin.left - margin.right : xScale(d.x1) - xScale(d.x0) - 1)
     .attr("y", (d) => yScale(d.length))
     .attr("height", (d) => yScale(0) - yScale(d.length));
 
@@ -144,7 +144,7 @@ function loadHistogramByYear(data) {
   // Add the X axis
   svg.append("g")
   .attr("transform", `translate(0,${height - margin.bottom})`)
-  .call(d3.axisBottom(xScale).ticks(width / 80).tickSizeOuter(0))
+  .call(d3.axisBottom(xScale).ticks(width / 80, "f").tickSizeOuter(0))
   .call((g) => g.append("text")
       .attr("x", width)
       .attr("y", margin.bottom)
