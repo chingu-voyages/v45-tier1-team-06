@@ -15,10 +15,7 @@ async function fetchMeteoriteData() {
     );
     if (!response.ok) throw new Error("Connection to API unsuccessful");
     const data = await response.json();
-    setTotalStrikes(data);
-    setAvgMass(data);
-    fillTable(data);
-    loadHistogramByYear(data);
+    loadContent(data);
     meteoriteData = data;
     return data; // This function returns a promise
   } catch (error) {
@@ -53,24 +50,24 @@ form.addEventListener("submit", (e) => {
         (year ? meteoriteDate.getFullYear() === Number(year) : true)
     });
   const filteredData = filterData();
-  setTotalStrikes(filteredData);
-  setAvgMass(filteredData);
-  clearHistograms();
-  loadHistogramByYear(filteredData);
-  cleanTable();
-  fillTable(filteredData);
+  loadContent(filteredData);
 });
 
 const resetBtn = document.querySelector(".search.clear-button");
 resetBtn.addEventListener("click", resetContent);
 
-function resetContent() {
-  setTotalStrikes(meteoriteData);
-  setAvgMass(meteoriteData);
+function loadContent(data) {
+  setTotalStrikes(data);
+  setAvgMass(data);
   clearHistograms();
-  loadHistogramByYear(meteoriteData);
+  loadHistogramByYear(data);
+  loadHistogramByComposition(data);
   cleanTable();
-  fillTable(meteoriteData);
+  fillTable(data);
+} 
+
+function resetContent() {
+  loadContent(meteoriteData);
 }
 
 // Summary metric functions
@@ -98,15 +95,10 @@ function loadHistogramByYear(data) {
 
   const binsMax = d3.max(bins, (d) => d.length);
 
-  // console.log(bins[0].x0);
-  // console.log(bins.length);
-  // console.log(bins[bins.length - 1].x1);
-  // console.log(binsMax);
-
   // Define SVG measures
-  const margin = {top: 20, right: 20, bottom: 30, left: 40};
+  const margin = {top: 40, right: 20, bottom: 30, left: 40};
   const width = 960 - margin.left - margin.right;
-  const height = 500 - margin.top - margin.bottom;
+  const height = 520 - margin.top - margin.bottom;
 
   // Append SVG element
   const svg = d3.select(".histogram-container.by-year")
@@ -114,11 +106,11 @@ function loadHistogramByYear(data) {
     .attr("width", width)
     .attr("height", height)
     .attr("viewBox", [0, 0, width, height])
-    .attr("style", "max-width: 100%; height: auto;");
+    .attr("style", "width: 100%; height: auto;");
 
   // X axis scale
   const xScale = d3.scaleLinear()
-    .domain([bins[0].x0, bins[bins.length - 1].x1])     // can use this instead of 1000 to have the max of data: d3.max(data, function(d) { return +d.price })
+    .domain([bins[0].x0, bins[bins.length - 1].x1])
     .range([margin.left, width - margin.right]);
 
   // Y axis scale
@@ -134,13 +126,7 @@ function loadHistogramByYear(data) {
     .attr("x", (d) => xScale(d.x0) + 1)
     .attr("width", (d) => xScale(d.x1) - xScale(d.x0) - 1)
     .attr("y", (d) => yScale(d.length))
-    .attr("height", (d) => yScale(0) - yScale(d.length))
-      // .attr("x", 1)
-      // //.attr("class", d => console.log(d.x1))
-      // .attr("transform", function(d) { return "translate(" + xScale(d.x0) + "," + yScale(d.length) + ")"; })
-      // .attr("width", function(d) { return xScale(d.x1) - xScale(d.x0) -1 ; })
-      // .attr("height", function(d) { return height - yScale(d.length); })
-    .style("fill", "steelblue");
+    .attr("height", (d) => yScale(0) - yScale(d.length));
 
   // Append the data labels to the bars
   svg.selectAll("text")
@@ -153,12 +139,7 @@ function loadHistogramByYear(data) {
         d.length >= 10 ? 5 : 1;
       return xScale(d.x0) + (xScale(d.x1) - xScale(d.x0)- 1) / 2 - adjustment
     })
-    .attr("y", d => {
-      const adjustment = d.length == binsMax ?
-      20 : -10;
-    return yScale(d.length) + adjustment
-    })
-    .style("fill", d => d.length == binsMax ? "white" : "black");
+    .attr("y", d => yScale(d.length) - 10);
 
   // Add the X axis
   svg.append("g")
@@ -175,21 +156,109 @@ function loadHistogramByYear(data) {
   svg.append("g")
   .attr("transform", `translate(${margin.left},0)`)
   .call(d3.axisLeft(yScale).ticks(height / 40))
-  //.call((g) => g.select(".domain").remove())
   .call((g) => g.append("text")
       .attr("x", - margin.left)
       .attr("y", 10)
       .attr("fill", "currentColor")
       .attr("text-anchor", "start")
-      .text("Frequency (no. of meteors)"));
+      .text("Frequency (no. of strikes)"));
+}
+
+function loadHistogramByComposition(data) {
+  // Get the bins from the data
+  const dataset = buildRecclassDataset(data);
+
+  const binsMax = d3.max(dataset, d => d[1]);
+
+  // Define SVG measures
+  const margin = {top: 40, right: 20, bottom: 110, left: 40};
+  const width = 960 - margin.left - margin.right;
+  const height = 680 - margin.top - margin.bottom;
+
+  // Append SVG element
+  const svg = d3.select(".histogram-container.by-composition")
+    .append("svg")
+    .attr("width", width)
+    .attr("height", height)
+    .attr("viewBox", [0, 0, width, height])
+    .attr("style", "width: 100%; height: auto;");
+
+  // X axis scale
+  const xScale = d3.scaleBand()
+    .domain([...dataset.map(d => d[0])])
+    .range([margin.left, width - margin.right]);
+
+  // Y axis scale
+  const yScale = d3.scaleLinear()
+    .domain([0, binsMax])
+    .range([height - margin.bottom, margin.top]);
+
+  // Append the bar rectangles to the svg element
+  const rectWidth = (width - margin.left - margin.right) / dataset.length - 1;
+  svg.selectAll("rect")
+    .data(dataset)
+    .enter()
+    .append("rect")
+    .attr("x", (d, i) => (rectWidth+1) * i + margin.left)
+    .attr("width", (d) => rectWidth)
+    .attr("y", (d) => yScale(d[1]))
+    .attr("height", (d) => yScale(0) - yScale(d[1]));
+
+  // Append the data labels to the bars
+  svg.selectAll("text")
+    .data(dataset)
+    .enter()
+    .append("text")
+    .text(d => d[1])
+    .attr("class", "recclass-label")
+    .attr("x", (d,i) => {
+      const adjustment = d[1] >= 100 ? 7 :
+        d[1] >= 10 ? 4.5 : 2;
+      return ((rectWidth+1) * i + margin.left) + rectWidth / 2 - adjustment
+    })
+    .attr("y", d => yScale(d[1]) - 5);
+
+  // Add the X axis
+  svg.append("g")
+  .attr("transform", `translate(0,${height - margin.bottom})`)
+  .attr("class", "recclass-axis")
+  .call(d3.axisBottom(xScale).ticks(width / 80).tickSizeOuter(0))
+  .attr("fill", "red")
+  .call((g) => g.append("text")
+      .attr("x", width)
+      .attr("y", margin.bottom - 5)
+      .attr("fill", "currentColor")
+      .attr("text-anchor", "end")
+      .text("Composition"));
+
+  // Add the Y axis
+  svg.append("g")
+  .attr("transform", `translate(${margin.left},0)`)
+  .call(d3.axisLeft(yScale).ticks(height / 40))
+  .call((g) => g.append("text")
+      .attr("x", - margin.left)
+      .attr("y", 10)
+      .attr("fill", "currentColor")
+      .attr("text-anchor", "start")
+      .text("Frequency (no. of strikes)"));
+}
+
+function buildRecclassDataset(data) {
+  const obj = {};
+  data.forEach(meteor => {
+    if (!obj[meteor.recclass]) return obj[meteor.recclass] = 1;
+    obj[meteor.recclass] += 1;
+  });
+  const dataset = [...Object.keys(obj).sort().map(key => [key, obj[key]])];
+  return dataset;
 }
 
 function clearHistograms() {
   const containers = document.querySelectorAll(".histogram-container");
   containers.forEach(container => {
-    if (!container.firstElementChild) return;
-    //console.log(container.firstElementChild);
-    container.removeChild(container.firstElementChild);
+    const svg = container.querySelector("svg");
+    if (!svg) return;
+    container.removeChild(svg);
   })
 }
 
