@@ -83,10 +83,6 @@ footer>a {
     fill: white;
 }
 
-footer p {
-    text-wrap: nowrap;
-}
-
 #gh-logo {
     max-width: 1.5em;
 }
@@ -221,7 +217,7 @@ input[type=range]::-webkit-slider-thumb {
 }
 
 input[type=range]::-moz-range-thumb {
-    -webkit-appearance: none;
+    /* -webkit-appearance: none; */
     pointer-events: all;
     width: 24px;
     height: 24px;
