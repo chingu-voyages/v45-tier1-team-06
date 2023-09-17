@@ -25,6 +25,15 @@ async function fetchMeteoriteData() {
 
 fetchMeteoriteData();
 
+//header search button
+const searchTop = document.querySelector(".topSearch");
+const main = document.querySelector("main");
+searchTop.addEventListener("click", top);
+function top() {
+  main.scrollTop = 0;
+  main.documentElement.scrollTop = 0; //for operaGX
+}
+
 //code below is for the form submit
 const form = document.querySelector("form");
 form.addEventListener("submit", (e) => {
@@ -41,13 +50,19 @@ form.addEventListener("submit", (e) => {
   const filterData = () =>
     meteoriteData.filter((meteorite) => {
       const meteoriteDate = new Date(meteorite.year);
-      return (name ? meteorite.name.toLowerCase().includes(name.toLowerCase()) : true) &&
+      return (
+        (name
+          ? meteorite.name.toLowerCase().includes(name.toLowerCase())
+          : true) &&
         (recclass
           ? meteorite.recclass.toUpperCase() == recclass.toUpperCase()
           : true) &&
-        (Number(meteorite.mass) >= massRangeMin || (massRangeMin == 0 && !meteorite.mass)) &&
-        (Number(meteorite.mass) <= massRangeMax || (massRangeMin == 0 && !meteorite.mass)) &&
+        (Number(meteorite.mass) >= massRangeMin ||
+          (massRangeMin == 0 && !meteorite.mass)) &&
+        (Number(meteorite.mass) <= massRangeMax ||
+          (massRangeMin == 0 && !meteorite.mass)) &&
         (year ? meteoriteDate.getFullYear() === Number(year) : true)
+      );
     });
   const filteredData = filterData();
   loadContent(filteredData);
@@ -64,7 +79,7 @@ function loadContent(data) {
   loadHistogramByComposition(data);
   cleanTable();
   fillTable(data);
-} 
+}
 
 function resetContent() {
   loadContent(meteoriteData);
@@ -79,29 +94,34 @@ function setTotalStrikes(meteorites) {
 
 function setAvgMass(meteorites) {
   const avgMassElement = document.getElementById("avg-mass");
-  const meteorsWithMass = meteorites.filter(e => e.mass);
-  if (!meteorsWithMass.length) return avgMassElement.textContent = 0;
-  const avgMass = meteorsWithMass.reduce((sum, e) => sum += +e.mass, 0)  / meteorsWithMass.length;
-  avgMassElement.textContent = (Math.round(avgMass * 100) / 100).toLocaleString("en-US");
+  const meteorsWithMass = meteorites.filter((e) => e.mass);
+  if (!meteorsWithMass.length) return (avgMassElement.textContent = 0);
+  const avgMass =
+    meteorsWithMass.reduce((sum, e) => (sum += +e.mass), 0) /
+    meteorsWithMass.length;
+  avgMassElement.textContent = (Math.round(avgMass * 100) / 100).toLocaleString(
+    "en-US"
+  );
 }
 
 // Histograms
 
 function loadHistogramByYear(data) {
   // Get the bins from the data
-  const bins = d3.bin()
-    .value(d => d.year ? +d.year.slice(0,4) : null)
-    (data);
+  const bins = d3.bin().value((d) => (d.year ? +d.year.slice(0, 4) : null))(
+    data
+  );
 
   const binsMax = d3.max(bins, (d) => d.length);
 
   // Define SVG measures
-  const margin = {top: 40, right: 20, bottom: 40, left: 40};
+  const margin = { top: 40, right: 20, bottom: 40, left: 40 };
   const width = 960 - margin.left - margin.right;
   const height = 540 - margin.top - margin.bottom;
 
   // Append SVG element
-  const svg = d3.select(".histogram-container.by-year")
+  const svg = d3
+    .select(".histogram-container.by-year")
     .append("svg")
     .attr("width", width)
     .attr("height", height)
@@ -109,74 +129,96 @@ function loadHistogramByYear(data) {
     .attr("style", "width: 100%; height: auto;");
 
   // X axis scale
-  const xScale = d3.scaleLinear()
+  const xScale = d3
+    .scaleLinear()
     .domain([bins[0].x0, bins[bins.length - 1].x1])
     .range([margin.left, width - margin.right]);
 
   // Y axis scale
-  const yScale = d3.scaleLinear()
+  const yScale = d3
+    .scaleLinear()
     .domain([0, binsMax])
     .range([height - margin.bottom, margin.top]);
 
   // Append the bar rectangles to the svg element
-  svg.selectAll("rect")
+  svg
+    .selectAll("rect")
     .data(bins)
     .enter()
     .append("rect")
-    .attr("x", (d) => bins.length === 1 ? margin.left : xScale(d.x0) + 1)
-    .attr("width", (d) => bins.length === 1 ? width - margin.left - margin.right : xScale(d.x1) - xScale(d.x0) - 1)
+    .attr("x", (d) => (bins.length === 1 ? margin.left : xScale(d.x0) + 1))
+    .attr("width", (d) =>
+      bins.length === 1
+        ? width - margin.left - margin.right
+        : xScale(d.x1) - xScale(d.x0) - 1
+    )
     .attr("y", (d) => yScale(d.length))
-    .attr("height", (d) => yScale(0) - yScale(d.length));
+    .attr("height", (d) => yScale(0) - yScale(d.length))
+    .style("fill", "#393e46");
 
   // Append the data labels to the bars
-  svg.selectAll("text")
+  svg
+    .selectAll("text")
     .data(bins)
     .enter()
     .append("text")
-    .text(d => d.length)
-    .attr("x", d => {
-      const adjustment = d.length >= 100 ? 10 :
-        d.length >= 10 ? 5 : 1;
-      return xScale(d.x0) + (xScale(d.x1) - xScale(d.x0)- 1) / 2 - adjustment
+    .text((d) => d.length)
+    .attr("x", (d) => {
+      const adjustment = d.length >= 100 ? 10 : d.length >= 10 ? 5 : 1;
+      return xScale(d.x0) + (xScale(d.x1) - xScale(d.x0) - 1) / 2 - adjustment;
     })
-    .attr("y", d => yScale(d.length) - 10);
+    .attr("y", (d) => yScale(d.length) - 10);
 
   // Add the X axis
-  svg.append("g")
-  .attr("transform", `translate(0,${height - margin.bottom})`)
-  .call(d3.axisBottom(xScale).ticks(width / 80, "f").tickSizeOuter(0))
-  .call((g) => g.append("text")
-      .attr("x", width)
-      .attr("y", margin.bottom)
-      .attr("fill", "currentColor")
-      .attr("text-anchor", "end")
-      .text("Year"));
+  svg
+    .append("g")
+    .attr("transform", `translate(0,${height - margin.bottom})`)
+    .call(
+      d3
+        .axisBottom(xScale)
+        .ticks(width / 80, "f")
+        .tickSizeOuter(0)
+    )
+    .call((g) =>
+      g
+        .append("text")
+        .attr("x", width)
+        .attr("y", margin.bottom)
+        .attr("fill", "currentColor")
+        .attr("text-anchor", "end")
+        .text("Year")
+    );
 
   // Add the Y axis
-  svg.append("g")
-  .attr("transform", `translate(${margin.left},0)`)
-  .call(d3.axisLeft(yScale).ticks(height / 40))
-  .call((g) => g.append("text")
-      .attr("x", - margin.left)
-      .attr("y", 10)
-      .attr("fill", "currentColor")
-      .attr("text-anchor", "start")
-      .text("Frequency (no. of strikes)"));
+  svg
+    .append("g")
+    .attr("transform", `translate(${margin.left},0)`)
+    .call(d3.axisLeft(yScale).ticks(height / 40))
+    .call((g) =>
+      g
+        .append("text")
+        .attr("x", -margin.left)
+        .attr("y", 10)
+        .attr("fill", "currentColor")
+        .attr("text-anchor", "start")
+        .text("Frequency (no. of strikes)")
+    );
 }
 
 function loadHistogramByComposition(data) {
   // Get the bins from the data
   const dataset = buildRecclassDataset(data);
 
-  const binsMax = d3.max(dataset, d => d[1]);
+  const binsMax = d3.max(dataset, (d) => d[1]);
 
   // Define SVG measures
-  const margin = {top: 40, right: 20, bottom: 110, left: 40};
+  const margin = { top: 40, right: 20, bottom: 110, left: 40 };
   const width = 960 - margin.left - margin.right;
   const height = 680 - margin.top - margin.bottom;
 
   // Append SVG element
-  const svg = d3.select(".histogram-container.by-composition")
+  const svg = d3
+    .select(".histogram-container.by-composition")
     .append("svg")
     .attr("width", width)
     .attr("height", height)
@@ -184,83 +226,125 @@ function loadHistogramByComposition(data) {
     .attr("style", "width: 100%; height: auto;");
 
   // X axis scale
-  const xScale = d3.scaleBand()
-    .domain([...dataset.map(d => d[0])])
+  const xScale = d3
+    .scaleBand()
+    .domain([...dataset.map((d) => d[0])])
     .range([margin.left, width - margin.right]);
 
   // Y axis scale
-  const yScale = d3.scaleLinear()
+  const yScale = d3
+    .scaleLinear()
     .domain([0, binsMax])
     .range([height - margin.bottom, margin.top]);
 
   // Append the bar rectangles to the svg element
   const rectWidth = (width - margin.left - margin.right) / dataset.length - 1;
-  svg.selectAll("rect")
+  svg
+    .selectAll("rect")
     .data(dataset)
     .enter()
     .append("rect")
-    .attr("x", (d, i) => (rectWidth+1) * i + margin.left)
+    .attr("x", (d, i) => (rectWidth + 1) * i + margin.left)
     .attr("width", (d) => rectWidth)
     .attr("y", (d) => yScale(d[1]))
-    .attr("height", (d) => yScale(0) - yScale(d[1]));
+    .attr("height", (d) => yScale(0) - yScale(d[1]))
+    .style("fill", "#393e46");
 
   // Append the data labels to the bars
-  svg.selectAll("text")
+  svg
+    .selectAll("text")
     .data(dataset)
     .enter()
     .append("text")
-    .text(d => d[1])
+    .text((d) => d[1])
     .attr("class", "recclass-label")
-    .attr("x", (d,i) => {
-      const adjustment = d[1] >= 100 ? 7 :
-        d[1] >= 10 ? 4.5 : 2;
-      return ((rectWidth+1) * i + margin.left) + rectWidth / 2 - adjustment
+    .attr("x", (d, i) => {
+      const adjustment = d[1] >= 100 ? 7 : d[1] >= 10 ? 4.5 : 2;
+      return (rectWidth + 1) * i + margin.left + rectWidth / 2 - adjustment;
     })
-    .attr("y", d => yScale(d[1]) - 5);
+    .attr("y", (d) => yScale(d[1]) - 5);
 
   // Add the X axis
-  svg.append("g")
-  .attr("transform", `translate(0,${height - margin.bottom})`)
-  .attr("class", "recclass-axis")
-  .call(d3.axisBottom(xScale).ticks(width / 80).tickSizeOuter(0))
-  .attr("fill", "red")
-  .call((g) => g.append("text")
-      .attr("x", width)
-      .attr("y", margin.bottom - 5)
-      .attr("fill", "currentColor")
-      .attr("text-anchor", "end")
-      .text("Composition"));
+  svg
+    .append("g")
+    .attr("transform", `translate(0,${height - margin.bottom})`)
+    .attr("class", "recclass-axis")
+    .call(
+      d3
+        .axisBottom(xScale)
+        .ticks(width / 80)
+        .tickSizeOuter(0)
+    )
+    .attr("fill", "red")
+    .call((g) =>
+      g
+        .append("text")
+        .attr("x", width)
+        .attr("y", margin.bottom - 5)
+        .attr("fill", "currentColor")
+        .attr("text-anchor", "end")
+        .text("Composition")
+    );
 
   // Add the Y axis
-  svg.append("g")
-  .attr("transform", `translate(${margin.left},0)`)
-  .call(d3.axisLeft(yScale).ticks(height / 40))
-  .call((g) => g.append("text")
-      .attr("x", - margin.left)
-      .attr("y", 10)
-      .attr("fill", "currentColor")
-      .attr("text-anchor", "start")
-      .text("Frequency (no. of strikes)"));
+  svg
+    .append("g")
+    .attr("transform", `translate(${margin.left},0)`)
+    .call(d3.axisLeft(yScale).ticks(height / 40))
+    .call((g) =>
+      g
+        .append("text")
+        .attr("x", -margin.left)
+        .attr("y", 10)
+        .attr("fill", "currentColor")
+        .attr("text-anchor", "start")
+        .text("Frequency (no. of strikes)")
+    );
 }
 
 function buildRecclassDataset(data) {
   const obj = {};
-  data.forEach(meteor => {
-    if (!obj[meteor.recclass]) return obj[meteor.recclass] = 1;
+  data.forEach((meteor) => {
+    if (!obj[meteor.recclass]) return (obj[meteor.recclass] = 1);
     obj[meteor.recclass] += 1;
   });
-  const dataset = [...Object.keys(obj).sort().map(key => [key, obj[key]])];
+  const dataset = [
+    ...Object.keys(obj)
+      .sort()
+      .map((key) => [key, obj[key]]),
+  ];
   return dataset;
 }
 
 function clearHistograms() {
   const containers = document.querySelectorAll(".histogram-container");
-  containers.forEach(container => {
+  containers.forEach((container) => {
     const svg = container.querySelector("svg");
     if (!svg) return;
     container.removeChild(svg);
-  })
+  });
 }
+//histograms animations
+const byComposition = document.querySelector(".by-composition");
+const byYear = document.querySelector(".by-year");
+const toRight = (entries, observer) => {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add("slideRight");
+    }
+  });
+};
+const toLeft = (entries, observer) => {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add("slideLeft");
+    }
+  });
+};
+const yearObserver = new IntersectionObserver(toRight, {});
+const compositionObserver = new IntersectionObserver(toLeft, {});
+yearObserver.observe(byYear);
+compositionObserver.observe(byComposition);
 
 // Table functions
 
@@ -308,7 +392,7 @@ function addFieldToTable(content, i) {
 
 function controlFromInput(fromSlider, fromInput, toInput, controlSlider) {
   const [from, to] = getParsed(fromInput, toInput);
-  fillSlider(fromInput, toInput, "#C6C6C6", "#25daa5", controlSlider);
+  fillSlider(fromInput, toInput, "#C6C6C6", "#222831", controlSlider);
   if (from > to) {
     fromSlider.value = to;
     fromInput.value = to;
@@ -319,7 +403,7 @@ function controlFromInput(fromSlider, fromInput, toInput, controlSlider) {
 
 function controlToInput(toSlider, fromInput, toInput, controlSlider) {
   const [from, to] = getParsed(fromInput, toInput);
-  fillSlider(fromInput, toInput, "#C6C6C6", "#25daa5", controlSlider);
+  fillSlider(fromInput, toInput, "#C6C6C6", "#222831", controlSlider);
   setToggleAccessible(toInput);
   if (from <= to) {
     toSlider.value = to;
@@ -331,7 +415,7 @@ function controlToInput(toSlider, fromInput, toInput, controlSlider) {
 
 function controlFromSlider(fromSlider, toSlider, fromInput) {
   const [from, to] = getParsed(fromSlider, toSlider);
-  fillSlider(fromSlider, toSlider, "#C6C6C6", "#25daa5", toSlider);
+  fillSlider(fromSlider, toSlider, "#C6C6C6", "#222831", toSlider);
   if (from > to) {
     fromSlider.value = to;
     fromInput.value = to;
@@ -342,7 +426,7 @@ function controlFromSlider(fromSlider, toSlider, fromInput) {
 
 function controlToSlider(fromSlider, toSlider, toInput) {
   const [from, to] = getParsed(fromSlider, toSlider);
-  fillSlider(fromSlider, toSlider, "#C6C6C6", "#25daa5", toSlider);
+  fillSlider(fromSlider, toSlider, "#C6C6C6", "#222831", toSlider);
   setToggleAccessible(toSlider);
   if (from <= to) {
     toSlider.value = to;
@@ -386,7 +470,7 @@ const fromSlider = document.querySelector("#fromSlider");
 const toSlider = document.querySelector("#toSlider");
 const fromInput = document.querySelector("#fromInput");
 const toInput = document.querySelector("#toInput");
-fillSlider(fromSlider, toSlider, "#C6C6C6", "#25daa5", toSlider);
+fillSlider(fromSlider, toSlider, "#C6C6C6", "#222831", toSlider);
 setToggleAccessible(toSlider);
 
 fromSlider.oninput = () => controlFromSlider(fromSlider, toSlider, fromInput);
