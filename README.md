@@ -1,4 +1,4 @@
-# The Array Game
+# The Fireball App
 
 ## Overview
 
