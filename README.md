@@ -36,7 +36,7 @@ detailed analysis.
 
 ---
 ## Check out the Fireball App!
-[Click Here](chingu-voyages.github.io/v45-tier1-team-06/) to visit the live project and try the Fireball App for yourself!
+[Click Here](https://chingu-voyages.github.io/v45-tier1-team-06/) to visit the live project and try the Fireball App for yourself!
 
 ---
 # Acknowledgments
