@@ -48,13 +48,12 @@ nav a {
 
 .search-btn {
   width: 250px;
-  height: 50px;
   font-size: 1.25em;
   align-self: center;
   border: none;
   border-radius: 25px;
   color: white;
-  background-color: purple;
+  background-color: #f96d00;
   cursor: pointer;
 }
 
@@ -352,6 +351,10 @@ span.table-header {
 /* Media query for mobile responsiveness */
 
 @media (max-width: 460px) {
+  .top-nav {
+    padding: 1em 0;
+  }
+
   .scrollable {
     width: calc(100% - 2em);
   }
