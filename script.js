@@ -38,6 +38,11 @@ function top() {
 const form = document.querySelector("form");
 form.addEventListener("submit", (e) => {
   e.preventDefault();
+
+  // remove histograms class animations
+  byYear.classList.remove("slideRight");
+  byComposition.classList.remove("slideLeft");
+
   const name = document.getElementById("name").value || null;
   const year = document.getElementById("year").value;
   const recclass = document.getElementById("recclass").value;
